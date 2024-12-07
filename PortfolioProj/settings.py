@@ -16,11 +16,7 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-import environ
 
-env = environ.Env()
-
-environ.Env.read_env()
 
 
 
@@ -28,12 +24,12 @@ environ.Env.read_env()
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-jnyu#+3do71^y-9!2(pxz#+yx$46z*2qquwb2+9&fj#6=pu$#-'
+SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = os.environ.get("DEBUG", "False").lower() == "true"
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS").split(" ")
 
 
 # Application definition
@@ -63,7 +59,7 @@ ROOT_URLCONF = 'PortfolioProj.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'Templates/jobs'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -95,10 +91,9 @@ DATABASES = {
     }
 }
 
+database_url = os.environ.get("DATABASE_URL")
+DATABASES['default']= dj_database_url.parse(database_url)
 
-DATABASES= {
-    'default': dj_database_url.parse(env('DATABASE_URL'))
-}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
